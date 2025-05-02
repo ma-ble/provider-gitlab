@@ -120,14 +120,7 @@ func TestGenerateObservation(t *testing.T) {
 							Value: customAttributeValue,
 						},
 					},
-					SharedWithGroups: []struct {
-						GroupID          int             `json:"group_id"`
-						GroupName        string          `json:"group_name"`
-						GroupFullPath    string          `json:"group_full_path"`
-						GroupAccessLevel int             `json:"group_access_level"`
-						ExpiresAt        *gitlab.ISOTime `json:"expires_at"`
-						MemberRoleID     int             `json:"member_role_id"`
-					}{
+					SharedWithGroups: []gitlab.SharedWithGroup{
 						{
 							GroupID:          ID,
 							GroupName:        name,
@@ -187,14 +180,7 @@ func TestGenerateObservation(t *testing.T) {
 		"SharedWithGroupExpiresAtIsNil": {
 			args: args{
 				p: &gitlab.Group{
-					SharedWithGroups: []struct {
-						GroupID          int             `json:"group_id"`
-						GroupName        string          `json:"group_name"`
-						GroupFullPath    string          `json:"group_full_path"`
-						GroupAccessLevel int             `json:"group_access_level"`
-						ExpiresAt        *gitlab.ISOTime `json:"expires_at"`
-						MemberRoleID     int             `json:"member_role_id"`
-					}{
+					SharedWithGroups: []gitlab.SharedWithGroup{
 						{
 							ExpiresAt: nil,
 						},
