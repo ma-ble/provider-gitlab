@@ -52,14 +52,15 @@ var (
 	name           = "Access Token Name"
 	token          = "Token"
 	accessTokenObj = gitlab.GroupAccessToken{
-		ID:          accessTokenID,
-		Name:        name,
-		ExpiresAt:   (*gitlab.ISOTime)(&expiresAt),
-		Token:       token,
-		Scopes:      []string{"scope1", "scope2"},
+		PersonalAccessToken: gitlab.PersonalAccessToken{
+			ID:        accessTokenID,
+			Name:      name,
+			ExpiresAt: (*gitlab.ISOTime)(&expiresAt),
+			Token:     token,
+			Scopes:    []string{"scope1", "scope2"},
+		},
 		AccessLevel: 40, // Access level. Valid values are 10 (Guest), 20 (Reporter), 30 (Developer), 40 (Maintainer), and 50 (Owner). Defaults to 40.
 	}
-
 	extNameAnnotation = map[string]string{meta.AnnotationKeyExternalName: fmt.Sprint(accessTokenID)}
 )
 
@@ -256,7 +257,9 @@ func TestObserve(t *testing.T) {
 				accessTokenClient: &fake.MockClient{
 					MockGetGroupAccessToken: func(pid interface{}, id int, options ...gitlab.RequestOptionFunc) (*gitlab.GroupAccessToken, *gitlab.Response, error) {
 						return &gitlab.GroupAccessToken{
-							ExpiresAt:   accessTokenObj.ExpiresAt,
+							PersonalAccessToken: gitlab.PersonalAccessToken{
+								ExpiresAt: accessTokenObj.ExpiresAt,
+							},
 							AccessLevel: accessTokenObj.AccessLevel,
 						}, &gitlab.Response{}, nil
 					},
