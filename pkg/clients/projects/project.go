@@ -89,7 +89,7 @@ func GenerateObservation(prj *gitlab.Project) v1alpha1.ProjectObservation { //no
 
 	if prj.MergeRequestsAccessLevel != "" {
 		issuesAccessLevel := v1alpha1.AccessControlValue(prj.MergeRequestsAccessLevel)
-		o.MergeRequestAccessLevel = &issuesAccessLevel
+		o.MergeRequestsAccessLevel = &issuesAccessLevel
 	}
 
 	if prj.BuildsAccessLevel != "" {

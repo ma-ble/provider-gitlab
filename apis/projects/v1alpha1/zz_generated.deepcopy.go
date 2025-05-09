@@ -1390,8 +1390,8 @@ func (in *ProjectObservation) DeepCopyInto(out *ProjectObservation) {
 		in, out := &in.MarkedForDeletionOn, &out.MarkedForDeletionOn
 		*out = (*in).DeepCopy()
 	}
-	if in.MergeRequestAccessLevel != nil {
-		in, out := &in.MergeRequestAccessLevel, &out.MergeRequestAccessLevel
+	if in.MergeRequestsAccessLevel != nil {
+		in, out := &in.MergeRequestsAccessLevel, &out.MergeRequestsAccessLevel
 		*out = new(AccessControlValue)
 		**out = **in
 	}

@@ -370,11 +370,11 @@ func TestObserve(t *testing.T) {
 			withExternalName("0"),
 			withConditions(xpv1.Available()),
 			withStatus(v1alpha1.ProjectObservation{
-				IssuesAccessLevel:       &al,
-				BuildsAccessLevel:       &al,
-				MergeRequestAccessLevel: &al,
-				SnippetsAccessLevel:     &al,
-				WikiAccessLevel:         &al,
+				IssuesAccessLevel:        &al,
+				BuildsAccessLevel:        &al,
+				MergeRequestsAccessLevel: &al,
+				SnippetsAccessLevel:      &al,
+				WikiAccessLevel:          &al,
 			}),
 		}
 		gitlabProject := &gitlab.Project{

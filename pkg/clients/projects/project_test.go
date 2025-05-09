@@ -315,7 +315,7 @@ func TestGenerateObservation(t *testing.T) {
 				NameWithNamespace:         nameWithNamespace,
 				IssuesAccessLevel:         &issuesAccessLevelv1alpha1,
 				OpenIssuesCount:           openIssuesCount,
-				MergeRequestAccessLevel:   &mergeRequestsAccessLevelv1alpha1,
+				MergeRequestsAccessLevel:  &mergeRequestsAccessLevelv1alpha1,
 				BuildsAccessLevel:         &buildsAccessLevelv1alpha1,
 				WikiAccessLevel:           &wikiAccessLevelv1alpha1,
 				SnippetsAccessLevel:       &snippetsAccessLevelv1alpha1,

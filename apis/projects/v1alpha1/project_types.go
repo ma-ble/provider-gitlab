@@ -520,7 +520,7 @@ type ProjectObservation struct {
 	LicenseURL                string                     `json:"licenseUrl,omitempty"`
 	Links                     *Links                     `json:"links,omitempty"`
 	MarkedForDeletionOn       *metav1.Time               `json:"markedForDeletionOn,omitempty"`
-	MergeRequestAccessLevel   *AccessControlValue        `json:"mergeRequestsAccessLevel,omitempty"`
+	MergeRequestsAccessLevel  *AccessControlValue        `json:"mergeRequestsAccessLevel,omitempty"`
 	NameWithNamespace         string                     `json:"nameWithNamespace,omitempty"`
 	Namespace                 *ProjectNamespace          `json:"namespace,omitempty"`
 	OpenIssuesCount           int                        `json:"openIssuesCount,omitempty"`
