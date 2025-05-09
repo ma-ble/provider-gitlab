@@ -513,14 +513,14 @@ type ProjectObservation struct {
 	HTTPURLToRepo             string                     `json:"httpUrlToRepo,omitempty"`
 	ImportError               string                     `json:"importError,omitempty"`
 	ImportStatus              string                     `json:"importStatus,omitempty"`
-	IssuesAccessLevel         AccessControlValue         `json:"issuesAccessLevel,omitempty"`
-	BuildsAccessLevel         AccessControlValue         `json:"buildsAccessLevel,omitempty"`
+	IssuesAccessLevel         *AccessControlValue        `json:"issuesAccessLevel,omitempty"`
+	BuildsAccessLevel         *AccessControlValue        `json:"buildsAccessLevel,omitempty"`
 	LastActivityAt            *metav1.Time               `json:"lastActivityAt,omitempty"`
 	License                   *ProjectLicense            `json:"license,omitempty"`
 	LicenseURL                string                     `json:"licenseUrl,omitempty"`
 	Links                     *Links                     `json:"links,omitempty"`
 	MarkedForDeletionOn       *metav1.Time               `json:"markedForDeletionOn,omitempty"`
-	MergeRequestAccessLevel   AccessControlValue         `json:"mergeRequestsAccessLevel,omitempty"`
+	MergeRequestAccessLevel   *AccessControlValue        `json:"mergeRequestsAccessLevel,omitempty"`
 	NameWithNamespace         string                     `json:"nameWithNamespace,omitempty"`
 	Namespace                 *ProjectNamespace          `json:"namespace,omitempty"`
 	OpenIssuesCount           int                        `json:"openIssuesCount,omitempty"`
@@ -532,11 +532,11 @@ type ProjectObservation struct {
 	SSHURLToRepo              string                     `json:"sshUrlToRepo,omitempty"`
 	ServiceDeskAddress        string                     `json:"serviceDeskAddress,omitempty"`
 	SharedWithGroups          []SharedWithGroups         `json:"sharedWithGroups,omitempty"`
-	SnippetsAccessLevel       AccessControlValue         `json:"snippetsAccessLevel,omitempty"`
+	SnippetsAccessLevel       *AccessControlValue        `json:"snippetsAccessLevel,omitempty"`
 	StarCount                 int                        `json:"starCount,omitempty"`
 	Statistics                *ProjectStatistics         `json:"statistics,omitempty"`
 	WebURL                    string                     `json:"webUrl,omitempty"`
-	WikiAccessLevel           AccessControlValue         `json:"wikiAccessLevel,omitempty"`
+	WikiAccessLevel           *AccessControlValue        `json:"wikiAccessLevel,omitempty"`
 }
 
 // A ProjectSpec defines the desired state of a Gitlab Project.

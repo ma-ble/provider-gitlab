@@ -1362,6 +1362,16 @@ func (in *ProjectObservation) DeepCopyInto(out *ProjectObservation) {
 		*out = new(ForkParent)
 		**out = **in
 	}
+	if in.IssuesAccessLevel != nil {
+		in, out := &in.IssuesAccessLevel, &out.IssuesAccessLevel
+		*out = new(AccessControlValue)
+		**out = **in
+	}
+	if in.BuildsAccessLevel != nil {
+		in, out := &in.BuildsAccessLevel, &out.BuildsAccessLevel
+		*out = new(AccessControlValue)
+		**out = **in
+	}
 	if in.LastActivityAt != nil {
 		in, out := &in.LastActivityAt, &out.LastActivityAt
 		*out = (*in).DeepCopy()
@@ -1379,6 +1389,11 @@ func (in *ProjectObservation) DeepCopyInto(out *ProjectObservation) {
 	if in.MarkedForDeletionOn != nil {
 		in, out := &in.MarkedForDeletionOn, &out.MarkedForDeletionOn
 		*out = (*in).DeepCopy()
+	}
+	if in.MergeRequestAccessLevel != nil {
+		in, out := &in.MergeRequestAccessLevel, &out.MergeRequestAccessLevel
+		*out = new(AccessControlValue)
+		**out = **in
 	}
 	if in.Namespace != nil {
 		in, out := &in.Namespace, &out.Namespace
@@ -1400,9 +1415,19 @@ func (in *ProjectObservation) DeepCopyInto(out *ProjectObservation) {
 		*out = make([]SharedWithGroups, len(*in))
 		copy(*out, *in)
 	}
+	if in.SnippetsAccessLevel != nil {
+		in, out := &in.SnippetsAccessLevel, &out.SnippetsAccessLevel
+		*out = new(AccessControlValue)
+		**out = **in
+	}
 	if in.Statistics != nil {
 		in, out := &in.Statistics, &out.Statistics
 		*out = new(ProjectStatistics)
+		**out = **in
+	}
+	if in.WikiAccessLevel != nil {
+		in, out := &in.WikiAccessLevel, &out.WikiAccessLevel
+		*out = new(AccessControlValue)
 		**out = **in
 	}
 }

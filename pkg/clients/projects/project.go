@@ -82,20 +82,30 @@ func GenerateObservation(prj *gitlab.Project) v1alpha1.ProjectObservation { //no
 		ServiceDeskAddress: prj.ServiceDeskAddress,
 	}
 
-	issuesAccessLevel := v1alpha1.AccessControlValue(prj.IssuesAccessLevel)
-	o.IssuesAccessLevel = issuesAccessLevel
+	if prj.IssuesAccessLevel != "" {
+		issuesAccessLevel := v1alpha1.AccessControlValue(prj.IssuesAccessLevel)
+		o.IssuesAccessLevel = &issuesAccessLevel
+	}
 
-	issuesAccessLevel = v1alpha1.AccessControlValue(prj.MergeRequestsAccessLevel)
-	o.MergeRequestAccessLevel = issuesAccessLevel
+	if prj.MergeRequestsAccessLevel != "" {
+		issuesAccessLevel := v1alpha1.AccessControlValue(prj.MergeRequestsAccessLevel)
+		o.MergeRequestAccessLevel = &issuesAccessLevel
+	}
 
-	issuesAccessLevel = v1alpha1.AccessControlValue(prj.BuildsAccessLevel)
-	o.BuildsAccessLevel = issuesAccessLevel
+	if prj.BuildsAccessLevel != "" {
+		issuesAccessLevel := v1alpha1.AccessControlValue(prj.BuildsAccessLevel)
+		o.BuildsAccessLevel = &issuesAccessLevel
+	}
 
-	issuesAccessLevel = v1alpha1.AccessControlValue(prj.WikiAccessLevel)
-	o.WikiAccessLevel = issuesAccessLevel
+	if prj.WikiAccessLevel != "" {
+		issuesAccessLevel := v1alpha1.AccessControlValue(prj.WikiAccessLevel)
+		o.WikiAccessLevel = &issuesAccessLevel
+	}
 
-	issuesAccessLevel = v1alpha1.AccessControlValue(prj.SnippetsAccessLevel)
-	o.SnippetsAccessLevel = issuesAccessLevel
+	if prj.SnippetsAccessLevel != "" {
+		issuesAccessLevel := v1alpha1.AccessControlValue(prj.SnippetsAccessLevel)
+		o.SnippetsAccessLevel = &issuesAccessLevel
+	}
 
 	if prj.ContainerExpirationPolicy != nil {
 		o.ContainerExpirationPolicy = &v1alpha1.ContainerExpirationPolicy{
