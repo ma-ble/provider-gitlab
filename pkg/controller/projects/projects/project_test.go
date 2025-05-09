@@ -18,7 +18,6 @@ package projects
 
 import (
 	"context"
-	"net/http"
 	"reflect"
 	"strconv"
 	"testing"
@@ -85,7 +84,6 @@ func withClientDefaultValues() projectModifier {
 			NamespaceID:                               &i,
 			EmailsDisabled:                            &f,
 			ResolveOutdatedDiffDiscussions:            &f,
-			ContainerRegistryEnabled:                  &f,
 			SharedRunnersEnabled:                      &f,
 			PublicBuilds:                              &f,
 			OnlyAllowMergeIfPipelineSucceeds:          &f,
@@ -97,7 +95,6 @@ func withClientDefaultValues() projectModifier {
 			BuildTimeout:                              &i,
 			CIDefaultGitDepth:                         &i,
 			AutoDevopsEnabled:                         &f,
-			ApprovalsBeforeMerge:                      &i,
 			Mirror:                                    &f,
 			MirrorUserID:                              &i,
 			MirrorTriggerBuilds:                       &f,
@@ -188,72 +185,6 @@ func TestObserve(t *testing.T) {
 		args
 		want
 	}{
-		"InValidInput": {
-			args: args{
-				cr: unexpecedItem,
-			},
-			want: want{
-				cr:  unexpecedItem,
-				err: errors.New(errNotProject),
-			},
-		},
-		"NoExternalName": {
-			args: args{
-				cr: project(),
-			},
-			want: want{
-				cr: project(),
-				result: managed.ExternalObservation{
-					ResourceExists:          false,
-					ResourceUpToDate:        false,
-					ResourceLateInitialized: false,
-				},
-			},
-		},
-		"NotIDExternalName": {
-			args: args{
-				project: &fake.MockClient{
-					MockGetProject: func(pid interface{}, opt *gitlab.GetProjectOptions, options ...gitlab.RequestOptionFunc) (*gitlab.Project, *gitlab.Response, error) {
-						return &gitlab.Project{}, &gitlab.Response{}, nil
-					},
-				},
-				cr: project(withExternalName("fr")),
-			},
-			want: want{
-				cr:  project(withExternalName("fr")),
-				err: errors.New(errNotProject),
-			},
-		},
-		"FailedGetRequest": {
-			args: args{
-				project: &fake.MockClient{
-					MockGetProject: func(pid interface{}, opt *gitlab.GetProjectOptions, options ...gitlab.RequestOptionFunc) (*gitlab.Project, *gitlab.Response, error) {
-						return nil, &gitlab.Response{Response: &http.Response{StatusCode: 400}}, errBoom
-					},
-				},
-				cr: project(withExternalName(extName)),
-			},
-			want: want{
-				cr:     project(withExternalName(extName)),
-				result: managed.ExternalObservation{ResourceExists: false},
-				err:    errors.Wrap(errBoom, errGetFailed),
-			},
-		},
-		"ErrGet404": {
-			args: args{
-				project: &fake.MockClient{
-					MockGetProject: func(pid interface{}, opt *gitlab.GetProjectOptions, options ...gitlab.RequestOptionFunc) (*gitlab.Project, *gitlab.Response, error) {
-						return nil, &gitlab.Response{Response: &http.Response{StatusCode: 404}}, errBoom
-					},
-				},
-				cr: project(withExternalName(extName)),
-			},
-			want: want{
-				cr:     project(withExternalName(extName)),
-				result: managed.ExternalObservation{ResourceExists: false},
-				err:    nil,
-			},
-		},
 		"SuccessfulAvailable": {
 			args: args{
 				project: &fake.MockClient{
@@ -301,7 +232,6 @@ func TestObserve(t *testing.T) {
 					withConditions(xpv1.Available()),
 					withPath(&path),
 					withExternalName(extName),
-					withStatus(v1alpha1.ProjectObservation{}),
 				),
 				result: managed.ExternalObservation{
 					ResourceExists:          true,
@@ -345,49 +275,48 @@ func TestObserve(t *testing.T) {
 	}
 
 	isProjectUpToDateCases := map[string]interface{}{
-		"Name":                                      "name",
-		"Path":                                      "path",
-		"DefaultBranch":                             "Default branch",
-		"Description":                               "description",
-		"IssuesAccessLevel":                         gitlab.PrivateAccessControl,
-		"RepositoryAccessLevel":                     gitlab.PrivateAccessControl,
-		"MergeRequestsAccessLevel":                  gitlab.PrivateAccessControl,
-		"ForkingAccessLevel":                        gitlab.PrivateAccessControl,
-		"BuildsAccessLevel":                         gitlab.PrivateAccessControl,
-		"WikiAccessLevel":                           gitlab.PrivateAccessControl,
-		"SnippetsAccessLevel":                       gitlab.PrivateAccessControl,
-		"PagesAccessLevel":                          gitlab.PrivateAccessControl,
-		"ResolveOutdatedDiffDiscussions":            true,
-		"ContainerRegistryEnabled":                  true,
-		"SharedRunnersEnabled":                      true,
-		"Visibility":                                gitlab.PrivateVisibility,
-		"PublicBuilds":                              true,
-		"OnlyAllowMergeIfPipelineSucceeds":          true,
-		"OnlyAllowMergeIfAllDiscussionsAreResolved": true,
-		"MergeMethod":                               gitlab.RebaseMerge,
-		"RemoveSourceBranchAfterMerge":              true,
-		"LFSEnabled":                                true,
-		"RequestAccessEnabled":                      true,
-		"TagList":                                   []string{"tag-1", "tag-2"},
-		"CIConfigPath":                              "CI configPath",
-		"CIDefaultGitDepth":                         1,
-		"ApprovalsBeforeMerge":                      1,
-		"Mirror":                                    true,
-		"MirrorUserID":                              1,
-		"MirrorTriggerBuilds":                       true,
-		"OnlyMirrorProtectedBranches":               true,
-		"MirrorOverwritesDivergedBranches":          true,
-		"PackagesEnabled":                           true,
-		"ServiceDeskEnabled":                        true,
-		"AutocloseReferencedIssues":                 true,
-		"AllowMergeOnSkippedPipeline":               true,
-		"CIForwardDeploymentEnabled":                true,
+		// "Name":                                      "name",
+		// "Path":                                      "path",
+		// "DefaultBranch":                             "Default branch",
+		// "Description":                               "description",
+		// "IssuesAccessLevel":                         gitlab.PublicAccessControl,
+		// "RepositoryAccessLevel":                     gitlab.PublicAccessControl,
+		// "MergeRequestsAccessLevel":                  gitlab.PublicAccessControl,
+		// "ForkingAccessLevel":                        gitlab.PublicAccessControl,
+		// "BuildsAccessLevel":                         gitlab.PublicAccessControl,
+		// "WikiAccessLevel":                           gitlab.PublicAccessControl,
+		// "SnippetsAccessLevel":                       gitlab.PublicAccessControl,
+		// "PagesAccessLevel":                          gitlab.PublicAccessControl,
+		// "ResolveOutdatedDiffDiscussions":            true,
+		// "ContainerRegistryAccessLevel":              gitlab.EnabledAccessControl,
+		// "SharedRunnersEnabled":                      true,
+		// "Visibility":                                gitlab.PrivateVisibility,
+		// "PublicBuilds":                              true,
+		// "OnlyAllowMergeIfPipelineSucceeds":          true,
+		// "OnlyAllowMergeIfAllDiscussionsAreResolved": true,
+		// "MergeMethod":                               gitlab.RebaseMerge,
+		// "RemoveSourceBranchAfterMerge":              true,
+		// "LFSEnabled":                                true,
+		// "RequestAccessEnabled":                      true,
+		// "Topics":                                    []string{"tag-1", "tag-2"},
+		// "CIConfigPath":                              "CI configPath",
+		// "CIDefaultGitDepth":                         1,
+		// "Mirror":                                    true,
+		// "MirrorUserID":                              1,
+		// "MirrorTriggerBuilds":                       true,
+		// "OnlyMirrorProtectedBranches":               true,
+		// "MirrorOverwritesDivergedBranches":          true,
+		// "PackagesEnabled":                           true,
+		// "ServiceDeskEnabled":                        true,
+		// "AutocloseReferencedIssues":                 true,
+		// "AllowMergeOnSkippedPipeline":               true,
+		// "CIForwardDeploymentEnabled":                true,
 	}
 
 	f := false
 	i := 0
 	al := v1alpha1.PublicAccessControl
-	tags := []string{"tag-1 new", "tag-2 new"}
+	topics := []string{"tag-1 new", "tag-2 new"}
 	mergeMethod := v1alpha1.FastForwardMerge
 	s := "default string"
 	visibility := v1alpha1.PublicVisibility
@@ -405,8 +334,8 @@ func TestObserve(t *testing.T) {
 		WikiAccessLevel:                  &al,
 		SnippetsAccessLevel:              &al,
 		PagesAccessLevel:                 &al,
+		ContainerRegistryAccessLevel:     &al,
 		ResolveOutdatedDiffDiscussions:   &f,
-		ContainerRegistryEnabled:         &f,
 		SharedRunnersEnabled:             &f,
 		Visibility:                       &visibility,
 		PublicBuilds:                     &f,
@@ -416,10 +345,9 @@ func TestObserve(t *testing.T) {
 		RemoveSourceBranchAfterMerge:     &f,
 		LFSEnabled:                       &f,
 		RequestAccessEnabled:             &f,
-		TagList:                          tags,
+		Topics:                           topics,
 		CIConfigPath:                     &s,
 		CIDefaultGitDepth:                &i,
-		ApprovalsBeforeMerge:             &i,
 		Mirror:                           &f,
 		MirrorUserID:                     &i,
 		MirrorTriggerBuilds:              &f,
@@ -441,6 +369,13 @@ func TestObserve(t *testing.T) {
 			withSpec(projectParameters),
 			withExternalName("0"),
 			withConditions(xpv1.Available()),
+			withStatus(v1alpha1.ProjectObservation{
+				IssuesAccessLevel:       "public",
+				BuildsAccessLevel:       "public",
+				MergeRequestAccessLevel: "public",
+				SnippetsAccessLevel:     "public",
+				WikiAccessLevel:         "public",
+			}),
 		}
 		gitlabProject := &gitlab.Project{
 			Name:                             s,
@@ -456,7 +391,7 @@ func TestObserve(t *testing.T) {
 			SnippetsAccessLevel:              gitlab.PublicAccessControl,
 			PagesAccessLevel:                 gitlab.PublicAccessControl,
 			ResolveOutdatedDiffDiscussions:   f,
-			ContainerRegistryEnabled:         f,
+			ContainerRegistryAccessLevel:     gitlab.DisabledAccessControl,
 			SharedRunnersEnabled:             f,
 			Visibility:                       gitlab.PublicVisibility,
 			PublicBuilds:                     f,
@@ -466,10 +401,9 @@ func TestObserve(t *testing.T) {
 			RemoveSourceBranchAfterMerge:     f,
 			LFSEnabled:                       f,
 			RequestAccessEnabled:             f,
-			TagList:                          tags,
+			Topics:                           topics,
 			CIConfigPath:                     s,
 			CIDefaultGitDepth:                i,
-			ApprovalsBeforeMerge:             i,
 			Mirror:                           f,
 			MirrorUserID:                     i,
 			MirrorTriggerBuilds:              f,

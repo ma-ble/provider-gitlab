@@ -153,11 +153,6 @@ type ProjectParameters struct {
 	// +optional
 	AllowMergeOnSkippedPipeline *bool `json:"allowMergeOnSkippedPipeline,omitempty"`
 
-	// How many approvers should approve merge request by default.
-	// To configure approval rules, see Merge request approvals API.
-	// +optional
-	ApprovalsBeforeMerge *int `json:"approvalsBeforeMerge,omitempty"`
-
 	// Auto-cancel pending pipelines. This isn’t a boolean, but enabled/disabled.
 	// +optional
 	AutoCancelPendingPipelines *string `json:"autoCancelPendingPipelines,omitempty"`
@@ -209,7 +204,7 @@ type ProjectParameters struct {
 
 	// Enable container registry for this project.
 	// +optional
-	ContainerRegistryEnabled *bool `json:"containerRegistryEnabled,omitempty"`
+	ContainerRegistryAccessLevel *AccessControlValue `json:"containerRegistryAccessLevel,omitempty"`
 
 	// The default branch name. Requires initializeWithReadme to be true.
 	// +optional
@@ -380,7 +375,7 @@ type ProjectParameters struct {
 	// The list of tags for a project; put array of tags,
 	// that should be finally assigned to a project. Use topics instead.
 	// +optional
-	TagList []string `json:"tagList,omitempty"`
+	Topics []string `json:"topics,omitempty"`
 
 	// When used without useCustomTemplate, name of a built-in project template.
 	// When used with useCustomTemplate, name of a custom project template.
@@ -518,14 +513,14 @@ type ProjectObservation struct {
 	HTTPURLToRepo             string                     `json:"httpUrlToRepo,omitempty"`
 	ImportError               string                     `json:"importError,omitempty"`
 	ImportStatus              string                     `json:"importStatus,omitempty"`
-	IssuesEnabled             bool                       `json:"issuesEnabled,omitempty"`
-	JobsEnabled               bool                       `json:"jobsEnabled,omitempty"`
+	IssuesAccessLevel         AccessControlValue         `json:"issuesAccessLevel,omitempty"`
+	BuildsAccessLevel         AccessControlValue         `json:"buildsAccessLevel,omitempty"`
 	LastActivityAt            *metav1.Time               `json:"lastActivityAt,omitempty"`
 	License                   *ProjectLicense            `json:"license,omitempty"`
 	LicenseURL                string                     `json:"licenseUrl,omitempty"`
 	Links                     *Links                     `json:"links,omitempty"`
-	MarkedForDeletionAt       *metav1.Time               `json:"markedForDeletionAt,omitempty"`
-	MergeRequestsEnabled      bool                       `json:"mergeRequestsEnabled,omitempty"`
+	MarkedForDeletionOn       *metav1.Time               `json:"markedForDeletionOn,omitempty"`
+	MergeRequestAccessLevel   AccessControlValue         `json:"mergeRequestsAccessLevel,omitempty"`
 	NameWithNamespace         string                     `json:"nameWithNamespace,omitempty"`
 	Namespace                 *ProjectNamespace          `json:"namespace,omitempty"`
 	OpenIssuesCount           int                        `json:"openIssuesCount,omitempty"`
@@ -537,11 +532,11 @@ type ProjectObservation struct {
 	SSHURLToRepo              string                     `json:"sshUrlToRepo,omitempty"`
 	ServiceDeskAddress        string                     `json:"serviceDeskAddress,omitempty"`
 	SharedWithGroups          []SharedWithGroups         `json:"sharedWithGroups,omitempty"`
-	SnippetsEnabled           bool                       `json:"snippetsEnabled,omitempty"`
+	SnippetsAccessLevel       AccessControlValue         `json:"snippetsAccessLevel,omitempty"`
 	StarCount                 int                        `json:"starCount,omitempty"`
 	Statistics                *ProjectStatistics         `json:"statistics,omitempty"`
 	WebURL                    string                     `json:"webUrl,omitempty"`
-	WikiEnabled               bool                       `json:"wikiEnabled,omitempty"`
+	WikiAccessLevel           AccessControlValue         `json:"wikiAccessLevel,omitempty"`
 }
 
 // A ProjectSpec defines the desired state of a Gitlab Project.

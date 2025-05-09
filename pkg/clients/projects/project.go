@@ -61,31 +61,41 @@ func GenerateObservation(prj *gitlab.Project) v1alpha1.ProjectObservation { //no
 	}
 
 	o := v1alpha1.ProjectObservation{
-		ID:                   prj.ID,
-		Public:               prj.PublicJobs,
-		SSHURLToRepo:         prj.SSHURLToRepo,
-		HTTPURLToRepo:        prj.HTTPURLToRepo,
-		WebURL:               prj.WebURL,
-		ReadmeURL:            prj.ReadmeURL,
-		NameWithNamespace:    prj.NameWithNamespace,
-		PathWithNamespace:    prj.PathWithNamespace,
-		IssuesEnabled:        prj.IssuesEnabled,
-		OpenIssuesCount:      prj.OpenIssuesCount,
-		MergeRequestsEnabled: prj.MergeRequestsEnabled,
-		JobsEnabled:          prj.JobsEnabled,
-		WikiEnabled:          prj.WikiEnabled,
-		SnippetsEnabled:      prj.SnippetsEnabled,
-		CreatorID:            prj.CreatorID,
-		ImportStatus:         prj.ImportStatus,
-		ImportError:          prj.ImportError,
-		Archived:             prj.Archived,
-		ForksCount:           prj.ForksCount,
-		StarCount:            prj.StarCount,
-		EmptyRepo:            prj.EmptyRepo,
-		AvatarURL:            prj.AvatarURL,
-		LicenseURL:           prj.LicenseURL,
-		ServiceDeskAddress:   prj.ServiceDeskAddress,
+		ID:                 prj.ID,
+		Public:             prj.PublicJobs,
+		SSHURLToRepo:       prj.SSHURLToRepo,
+		HTTPURLToRepo:      prj.HTTPURLToRepo,
+		WebURL:             prj.WebURL,
+		ReadmeURL:          prj.ReadmeURL,
+		NameWithNamespace:  prj.NameWithNamespace,
+		PathWithNamespace:  prj.PathWithNamespace,
+		OpenIssuesCount:    prj.OpenIssuesCount,
+		CreatorID:          prj.CreatorID,
+		ImportStatus:       prj.ImportStatus,
+		ImportError:        prj.ImportError,
+		Archived:           prj.Archived,
+		ForksCount:         prj.ForksCount,
+		StarCount:          prj.StarCount,
+		EmptyRepo:          prj.EmptyRepo,
+		AvatarURL:          prj.AvatarURL,
+		LicenseURL:         prj.LicenseURL,
+		ServiceDeskAddress: prj.ServiceDeskAddress,
 	}
+
+	issuesAccessLevel := v1alpha1.AccessControlValue(prj.IssuesAccessLevel)
+	o.IssuesAccessLevel = issuesAccessLevel
+
+	issuesAccessLevel = v1alpha1.AccessControlValue(prj.MergeRequestsAccessLevel)
+	o.MergeRequestAccessLevel = issuesAccessLevel
+
+	issuesAccessLevel = v1alpha1.AccessControlValue(prj.BuildsAccessLevel)
+	o.BuildsAccessLevel = issuesAccessLevel
+
+	issuesAccessLevel = v1alpha1.AccessControlValue(prj.WikiAccessLevel)
+	o.WikiAccessLevel = issuesAccessLevel
+
+	issuesAccessLevel = v1alpha1.AccessControlValue(prj.SnippetsAccessLevel)
+	o.SnippetsAccessLevel = issuesAccessLevel
 
 	if prj.ContainerExpirationPolicy != nil {
 		o.ContainerExpirationPolicy = &v1alpha1.ContainerExpirationPolicy{
@@ -115,8 +125,8 @@ func GenerateObservation(prj *gitlab.Project) v1alpha1.ProjectObservation { //no
 	if prj.LastActivityAt != nil {
 		o.LastActivityAt = &metav1.Time{Time: *prj.LastActivityAt}
 	}
-	if prj.MarkedForDeletionAt != nil {
-		o.MarkedForDeletionAt = &metav1.Time{Time: time.Time(*prj.MarkedForDeletionAt)}
+	if prj.MarkedForDeletionOn != nil {
+		o.MarkedForDeletionOn = &metav1.Time{Time: time.Time(*prj.MarkedForDeletionOn)}
 	}
 
 	if len(o.ComplianceFrameworks) == 0 && len(prj.ComplianceFrameworks) > 0 {
@@ -292,7 +302,7 @@ func GenerateCreateProjectOptions(name string, p *v1alpha1.ProjectParameters) *g
 		EmailsDisabled:                      p.EmailsDisabled,
 		ResolveOutdatedDiffDiscussions:      p.ResolveOutdatedDiffDiscussions,
 		ContainerExpirationPolicyAttributes: clients.ContainerExpirationPolicyAttributesV1alpha1ToGitlab(p.ContainerExpirationPolicyAttributes),
-		ContainerRegistryEnabled:            p.ContainerRegistryEnabled,
+		ContainerRegistryAccessLevel:        (*gitlab.AccessControlValue)(p.ContainerRegistryAccessLevel),
 		SharedRunnersEnabled:                p.SharedRunnersEnabled,
 		Visibility:                          clients.VisibilityValueV1alpha1ToGitlab(p.Visibility),
 		ImportURL:                           p.ImportURL,
@@ -304,7 +314,7 @@ func GenerateCreateProjectOptions(name string, p *v1alpha1.ProjectParameters) *g
 		RemoveSourceBranchAfterMerge:             p.RemoveSourceBranchAfterMerge,
 		LFSEnabled:                               p.LFSEnabled,
 		RequestAccessEnabled:                     p.RequestAccessEnabled,
-		TagList:                                  &p.TagList,
+		Topics:                                   &p.Topics,
 		PrintingMergeRequestLinkEnabled:          p.PrintingMergeRequestLinkEnabled,
 		BuildGitStrategy:                         p.BuildGitStrategy,
 		BuildTimeout:                             p.BuildTimeout,
@@ -314,7 +324,6 @@ func GenerateCreateProjectOptions(name string, p *v1alpha1.ProjectParameters) *g
 		CIForwardDeploymentEnabled:               p.CIForwardDeploymentEnabled,
 		AutoDevopsEnabled:                        p.AutoDevopsEnabled,
 		AutoDevopsDeployStrategy:                 p.AutoDevopsDeployStrategy,
-		ApprovalsBeforeMerge:                     p.ApprovalsBeforeMerge,
 		ExternalAuthorizationClassificationLabel: p.ExternalAuthorizationClassificationLabel,
 		Mirror:                                   p.Mirror,
 		MirrorTriggerBuilds:                      p.MirrorTriggerBuilds,
@@ -356,7 +365,7 @@ func GenerateEditProjectOptions(name string, p *v1alpha1.ProjectParameters) *git
 		EmailsDisabled:                      p.EmailsDisabled,
 		ResolveOutdatedDiffDiscussions:      p.ResolveOutdatedDiffDiscussions,
 		ContainerExpirationPolicyAttributes: clients.ContainerExpirationPolicyAttributesV1alpha1ToGitlab(p.ContainerExpirationPolicyAttributes),
-		ContainerRegistryEnabled:            p.ContainerRegistryEnabled,
+		ContainerRegistryAccessLevel:        (*gitlab.AccessControlValue)(p.ContainerRegistryAccessLevel),
 		SharedRunnersEnabled:                p.SharedRunnersEnabled,
 		Visibility:                          clients.VisibilityValueV1alpha1ToGitlab(p.Visibility),
 		ImportURL:                           p.ImportURL,
@@ -368,7 +377,7 @@ func GenerateEditProjectOptions(name string, p *v1alpha1.ProjectParameters) *git
 		RemoveSourceBranchAfterMerge:             p.RemoveSourceBranchAfterMerge,
 		LFSEnabled:                               p.LFSEnabled,
 		RequestAccessEnabled:                     p.RequestAccessEnabled,
-		TagList:                                  &p.TagList,
+		Topics:                                   &p.Topics,
 		BuildGitStrategy:                         p.BuildGitStrategy,
 		BuildTimeout:                             p.BuildTimeout,
 		AutoCancelPendingPipelines:               p.AutoCancelPendingPipelines,
@@ -378,7 +387,6 @@ func GenerateEditProjectOptions(name string, p *v1alpha1.ProjectParameters) *git
 		CIDefaultGitDepth:                        p.CIDefaultGitDepth,
 		AutoDevopsEnabled:                        p.AutoDevopsEnabled,
 		AutoDevopsDeployStrategy:                 p.AutoDevopsDeployStrategy,
-		ApprovalsBeforeMerge:                     p.ApprovalsBeforeMerge,
 		ExternalAuthorizationClassificationLabel: p.ExternalAuthorizationClassificationLabel,
 		Mirror:                                   p.Mirror,
 		MirrorUserID:                             p.MirrorUserID,
